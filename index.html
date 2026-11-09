@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>License & Product Tracker</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#182235;--muted:#718096;--line:#e5eaf2;--blue:#315efb;--green:#0f9d72;--red:#e34d59}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:linear-gradient(120deg,#172b55,#315efb);color:#fff;padding:27px max(22px,calc((100% - 1220px)/2));}
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-size:23px;font-weight:800;letter-spacing:.2px}.sub{color:#dbe5ff;margin-top:5px}.pill{border:1px solid #ffffff55;padding:8px 12px;border-radius:20px;font-size:12px}
+main{max-width:1220px;margin:24px auto;padding:0 20px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 18px #172b5508}.stat{padding:17px 19px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:25px;margin-top:5px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:18px 0}.toolbar h2{margin:0;font-size:18px}.actions{display:flex;gap:8px;flex-wrap:wrap}button,.btn{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;background:#edf1ff;color:#2449d8}button.primary{background:var(--blue);color:white}button.dark{background:#202c43;color:white}button.danger{background:#fff0f0;color:var(--red)}button:disabled{opacity:.4;cursor:not-allowed}
+.panel{padding:17px;margin-bottom:18px}.formgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.field label{display:block;font-size:12px;color:#5d6b82;font-weight:650;margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid #dce3ee;border-radius:8px;padding:10px;background:#fff;font:inherit;color:var(--ink)}.field input:focus,.field textarea:focus{outline:2px solid #cbd7ff;border-color:var(--blue)}.formfoot{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}.hidden{display:none!important}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:1000px;background:white}th{background:#edf2fb;color:#34425a;text-align:left;font-size:11px;letter-spacing:.4px;padding:13px 11px;white-space:nowrap}td{padding:12px 11px;border-top:1px solid var(--line);font-size:13px;white-space:nowrap}tr:hover td{background:#fafbff}.tag{display:inline-block;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:700;background:#e8f8f2;color:#087a58}.tag.warn{background:#fff4df;color:#986000}.tag.expired{background:#ffe9eb;color:#c52c3a}.rowactions{display:flex;gap:5px}.rowactions button{padding:6px 8px;font-size:12px}.pagination{display:flex;justify-content:space-between;align-items:center;padding-top:15px;color:var(--muted)}.pagebuttons{display:flex;gap:8px}.muted{color:var(--muted)}.empty{text-align:center;padding:45px 15px;color:var(--muted)}.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.notice{padding:12px 14px;border-radius:9px;background:#eef4ff;color:#34518f;font-size:12px;line-height:1.5;margin-top:12px}.footer{text-align:center;color:#8994a7;font-size:12px;padding:18px}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start;flex-direction:column}}
+@media(max-width:520px){.formgrid,.settings{grid-template-columns:1fr}.toolbar{align-items:flex-start;flex-direction:column}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div><div class="brand">◈ License & Product Tracker</div><div class="sub">Manage clients, purchases, payments and expiry dates in one place.</div></div><div class="pill">PRIVATE WORKSPACE · 50 RECORDS / PAGE</div></div></header>
+<main>
+<section class="stats">
+ <div class="stat"><small>Total records</small><strong id="totalStat">0</strong></div>
+ <div class="stat"><small>Total product cost</small><strong id="costStat">₹0</strong></div>
+ <div class="stat"><small>Total paid</small><strong id="paidStat">₹0</strong></div>
+ <div class="stat"><small>Upcoming expiry (30 days)</small><strong id="expiryStat">0</strong></div>
+</section>
+<div class="toolbar"><h2>Product records</h2><div class="actions"><button id="exportBtn">Export CSV</button><button id="settingsBtn">⚙ Discord settings</button><button class="primary" id="addBtn">＋ Add details</button></div></div>
+<section class="panel hidden" id="formPanel">
+ <h3 id="formTitle" style="margin:0 0 15px">Add new details</h3>
+ <form id="recordForm"><div class="formgrid">
+ <div class="field"><label>Client name *</label><input id="client" required placeholder="e.g. AK ANIK GAMING"></div>
+ <div class="field"><label>Product name *</label><input id="product" required placeholder="e.g. VPS"></div>
+ <div class="field"><label>Quantity</label><input id="quantity" placeholder="1X" value="1X"></div>
+ <div class="field"><label>Total product cost (₹)</label><input id="productCost" type="number" min="0" step="0.01" value="0"></div>
+ <div class="field"><label>Due payment (₹)</label><input id="due" type="number" min="0" step="0.01" value="0"></div>
+ <div class="field"><label>Paid (₹)</label><input id="paid" type="number" min="0" step="0.01" value="0"></div>
+ <div class="field"><label>Purchased date *</label><input id="purchased" type="date" required></div>
+ <div class="field"><label>Renew / expiry date *</label><input id="renew" type="date" required></div>
+ <div class="field" style="grid-column:span 2"><label>Note</label><input id="note" placeholder="Optional notes"></div>
+ </div><div class="formfoot"><button type="button" id="cancelBtn">Cancel</button><button class="primary" type="submit">Save details</button></div></form>
+</section>
+<section class="panel hidden" id="settingsPanel">
+ <h3 style="margin:0 0 12px">Discord expiry notifications</h3>
+ <div class="settings">
+  <div class="field"><label>Cloudflare Worker API URL</label><input id="apiUrl" placeholder="https://your-worker.workers.dev"></div>
+  <div class="field"><label>Workspace access key</label><input id="apiKey" type="password" placeholder="Your private API key"></div>
+ </div>
+ <div class="notice">Notifications are sent by the Cloudflare Worker, even when this page is closed. It checks every hour and posts an expiry alert to your Discord log channel approximately 10 hours before renewal. Configure the Discord webhook as a Worker secret — never paste it into this public website.</div>
+ <div class="formfoot"><button id="testSync">Sync records</button><button class="primary" id="saveSettings">Save settings</button></div>
+ <p id="syncStatus" class="muted"></p>
+</section>
+<section class="panel">
+ <div class="toolbar" style="margin:0 0 13px"><div><strong id="pageHeading">Page 1</strong> <span class="muted" id="recordRange">· 0 records</span></div><div class="actions"><input id="search" placeholder="Search client / product…" style="border:1px solid #dce3ee;border-radius:8px;padding:9px 11px;min-width:210px"></div></div>
+ <div class="tablewrap"><table><thead><tr><th>CLIENT NAME</th><th>PRODUCT NAME</th><th>QUANTITY</th><th>TOTAL PRODUCT COST</th><th>DUE PAYMENT</th><th>PAID</th><th>PURCHASED DATE</th><th>RENEW DATE</th><th>NOTE</th><th>TOTAL COST</th><th>STATUS</th><th>ACTION</th></tr></thead><tbody id="tbody"></tbody></table><div id="empty" class="empty hidden">No details yet. Click <b>Add details</b> to create your first record.</div></div>
+ <div class="pagination"><span id="pageInfo">Showing 0–0 of 0</span><div class="pagebuttons"><button id="prevBtn">← Previous</button><button id="nextBtn" class="primary">Next →</button></div></div>
+</section>
+<div class="footer">Your records are stored in this browser unless you configure Worker sync. Export CSV regularly as a backup.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id), PAGE_SIZE=50;
+let records=[], page=1, editId=null;
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const today=()=>new Date().toISOString().slice(0,10);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function load(){try{records=JSON.parse(localStorage.getItem('licenseRecords')||'[]')}catch{records=[]} $('apiUrl').value=localStorage.getItem('workerUrl')||'';$('apiKey').value=localStorage.getItem('workerKey')||'';render()}
+function persist(){localStorage.setItem('licenseRecords',JSON.stringify(records));render()}
+function status(date){let d=Math.ceil((new Date(date+'T23:59:59')-new Date())/86400000);return d<0?'<span class="tag expired">Expired</span>':d<=10?'<span class="tag warn">Expiring soon</span>':'<span class="tag">Active</span>'}
+function render(){let q=$('search').value.toLowerCase(), filtered=records.filter(r=>(r.client+' '+r.product+' '+r.note).toLowerCase().includes(q));let pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));page=Math.min(page,pages);let start=(page-1)*PAGE_SIZE, slice=filtered.slice(start,start+PAGE_SIZE);
+$('totalStat').textContent=records.length;$('costStat').textContent=money(records.reduce((s,r)=>s+ +r.productCost,0));$('paidStat').textContent=money(records.reduce((s,r)=>s+ +r.paid,0));$('expiryStat').textContent=records.filter(r=>{let d=(new Date(r.renew)-new Date(today()))/86400000;return d>=0&&d<=30}).length;
+$('pageHeading').textContent='Page '+page;$('recordRange').textContent='· '+filtered.length+' records';$('pageInfo').textContent=filtered.length?`Showing ${start+1}–${Math.min(start+PAGE_SIZE,filtered.length)} of ${filtered.length}`:'Showing 0–0 of 0';$('prevBtn').disabled=page===1;$('nextBtn').disabled=page===pages;
+$('tbody').innerHTML=slice.map(r=>`<tr><td><b>${esc(r.client)}</b></td><td>${esc(r.product)}</td><td>${esc(r.quantity)}</td><td>${money(r.productCost)}</td><td>${money(r.due)}</td><td>${money(r.paid)}</td><td>${esc(r.purchased)}</td><td>${esc(r.renew)}</td><td>${esc(r.note)}</td><td><b>${money(r.productCost)}</b></td><td>${status(r.renew)}</td><td><div class="rowactions"><button onclick="editRecord('${r.id}')">Edit</button><button class="danger" onclick="deleteRecord('${r.id}')">Delete</button></div></td></tr>`).join('');
+$('empty').classList.toggle('hidden',slice.length!==0)}
+function openForm(r){editId=r?.id||null;$('formTitle').textContent=editId?'Edit details':'Add new details';['client','product','quantity','productCost','due','paid','purchased','renew','note'].forEach(k=>$(k).value=r?.[k]??({quantity:'1X',productCost:0,due:0,paid:0}[k]??''));$('formPanel').classList.remove('hidden');$('settingsPanel').classList.add('hidden');$('formPanel').scrollIntoView({behavior:'smooth'})}
+function editRecord(id){openForm(records.find(r=>r.id===id))}
+function deleteRecord(id){let r=records.find(x=>x.id===id);if(confirm(`Delete ${r.client} — ${r.product}? This cannot be undone.`)){records=records.filter(x=>x.id!==id);persist()}}
+$('addBtn').onclick=()=>openForm();$('cancelBtn').onclick=()=>{$('formPanel').classList.add('hidden');editId=null};
+$('recordForm').onsubmit=e=>{e.preventDefault();let r={id:editId||crypto.randomUUID(),...Object.fromEntries(['client','product','quantity','productCost','due','paid','purchased','renew','note'].map(k=>[k,$(k).value.trim()]))};if(editId)records=records.map(x=>x.id===editId?r:x);else records.unshift(r);persist();$('formPanel').classList.add('hidden');editId=null;};
+$('prevBtn').onclick=()=>{page--;render()};$('nextBtn').onclick=()=>{page++;render()};$('search').oninput=()=>{page=1;render()};
+$('settingsBtn').onclick=()=>{$('settingsPanel').classList.toggle('hidden');$('formPanel').classList.add('hidden')};
+$('saveSettings').onclick=()=>{localStorage.setItem('workerUrl',$('apiUrl').value.trim());localStorage.setItem('workerKey',$('apiKey').value.trim());$('syncStatus').textContent='Settings saved in this browser.'};
+$('testSync').onclick=async()=>{let url=$('apiUrl').value.trim(),key=$('apiKey').value.trim();if(!url||!key){$('syncStatus').textContent='Enter Worker URL and access key first.';return} $('syncStatus').textContent='Syncing…';try{let res=await fetch(url.replace(/\/$/,'')+'/records',{method:'PUT',headers:{'Content-Type':'application/json','X-API-Key':key},body:JSON.stringify(records)});let data=await res.json();if(!res.ok)throw Error(data.error||'Sync failed');$('syncStatus').textContent=`Synced ${records.length} records to secure cloud storage.`}catch(e){$('syncStatus').textContent='Sync error: '+e.message}};
+$('exportBtn').onclick=()=>{let cols=['client','product','quantity','productCost','due','paid','purchased','renew','note'];let csv=[cols.join(','),...records.map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='product-records.csv';a.click();URL.revokeObjectURL(a.href)};
+load();
+</script>
+</body></html>
